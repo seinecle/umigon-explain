@@ -3,15 +3,15 @@
  */
 package net.clementlevallois.umigon.explain;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObjectBuilder;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 import net.clementlevallois.umigon.model.BooleanCondition;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isAllCaps;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isFirstTermOfText;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isHashtag;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isHashtagNegativeSentiment;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isHashtagPositiveSentiment;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isHashtagStart;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isInHashtag;
-import static net.clementlevallois.umigon.model.BooleanCondition.BooleanConditionEnum.isQuestionMarkAtEndOfText;
+import net.clementlevallois.umigon.model.Category;
+import net.clementlevallois.umigon.model.ResultOneHeuristics;
 import net.clementlevallois.umigon.model.TypeOfToken.TypeOfTokenEnum;
 
 /**
@@ -20,12 +20,64 @@ import net.clementlevallois.umigon.model.TypeOfToken.TypeOfTokenEnum;
  */
 public class ExplanationOneHeuristics {
 
+    public static String getOneHeuristicsResultsPlainText(ResultOneHeuristics resultOneHeuristics, String languageTag) {
+        StringBuilder sb = new StringBuilder();
+        List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
+        // because we don't care to know about conditions that needed to NOT be fulfilled
+        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+
+        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+            return sb.toString();
+        }
+        sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
+        sb.append(": \"");
+
+        sb.append(resultOneHeuristics.getTokenInvestigated());
+        if (nonFlippedBooleanConditions.isEmpty()) {
+            return sb.append("\". ").toString();
+        } else {
+            sb.append("\", ");
+            sb.append(getAndANumberOfConditionsWereMatched(nonFlippedBooleanConditions.size(), languageTag));
+            sb.append(":\n");
+        }
+
+        for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
+            sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
+        }
+        if (sb.toString().endsWith(", ")) {
+            sb = new StringBuilder(sb.substring(0, sb.length() - 2));
+        }
+        return sb.toString();
+    }
+
+    public static JsonObjectBuilder getOneHeuristicsResultsJsonObject(ResultOneHeuristics resultOneHeuristics, String languageTag) {
+        JsonObjectBuilder job = Json.createObjectBuilder();
+
+        List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
+        // because we don't care to know about conditions that needed to NOT be fulfilled
+        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+
+        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+            return job;
+        }
+        job.add("type of token matched", resultOneHeuristics.getTypeOfToken().toString());
+
+        job.add("token matched", resultOneHeuristics.getTokenInvestigated());
+        if (nonFlippedBooleanConditions.isEmpty()) {
+            return job;
+        }
+        for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
+            job.addAll(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonJsonObject(booleanCondition, languageTag));
+        }
+        return job;
+    }
+
     public static String getTermWasMatched(String languageTag) {
         return UmigonExplain.getLocaleBundle(languageTag).getString("statement.term_was_matched");
     }
 
     public static String getAndANumberOfConditionsWereMatched(int numberOfConditions, String languageTag) {
-        switch (numberOfConditions){
+        switch (numberOfConditions) {
             case 1:
                 return UmigonExplain.getLocaleBundle(languageTag).getString("statement.and_one_condition_was_met");
             case 2:
@@ -36,7 +88,7 @@ public class ExplanationOneHeuristics {
             default:
                 return UmigonExplain.getLocaleBundle(languageTag).getString("statement.and_these_conditions_were_met");
         }
-        
+
     }
 
     public static String getTokenWasMatched(TypeOfTokenEnum typeOfTokenEnum, String languageTag) {
@@ -68,50 +120,4 @@ public class ExplanationOneHeuristics {
     public static String getHashtagWasMatched(String languageTag) {
         return UmigonExplain.getLocaleBundle(languageTag).getString("statement.hashtag_was_matched");
     }
-
-    public static String getConditionalExpressionName(BooleanCondition.BooleanConditionEnum condition, String languageTag) {
-        return UmigonExplain.getLocaleBundle(languageTag).getString("condition.name." + condition.name());
-    }
-
-    public static String getKeywordMatched(BooleanCondition.BooleanConditionEnum condition, String keyword) {
-        switch (condition) {
-            case isImmediatelyPrecededByANegation,                
-        isImmediatelyFollowedByTimeIndication,
-        isImmediatelyFollowedByANegation,
-        isImmediatelyPrecededBySpecificTerm,
-        isImmediatelyFollowedBySpecificTerm,
-        isImmediatelyFollowedByAnOpinion,
-        isPrecededBySubjectiveTerm,
-        isFollowedByVerbPastTense,
-        isFollowedByAPositiveOpinion,
-        isImmediatelyPrecededByPositive,
-        isImmediatelyPrecededByNegative,
-        isImmediatelyFollowedByAPositiveOpinion,
-        isImmediatelyFollowedByANegativeOpinion,
-        isPrecededByOpinion,
-        isPrecededByPositive,
-        isPrecededBySpecificTerm,
-        isFollowedBySpecificTerm,
-        isInATextWithOneOfTheseSpecificTerms,
-        isPrecededByStrongWord:
-                return "(\"" + keyword + "\")";
-
-            case isFirstLetterCapitalized,
-        isNegationInCaps,
-        isHashtagStart,
-        isHashtag,
-        isInHashtag,
-        isHashtagPositiveSentiment,
-        isHashtagNegativeSentiment,
-        isAllCaps,
-        isQuestionMarkAtEndOfText,
-        isFirstTermOfText:
-                return "";
-
-            default:
-                return "";
-
-        }
-    }
-
 }
