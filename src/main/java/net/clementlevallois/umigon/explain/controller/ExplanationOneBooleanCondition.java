@@ -1,7 +1,7 @@
 /*
  * author: Clément Levallois
  */
-package net.clementlevallois.umigon.explain;
+package net.clementlevallois.umigon.explain.controller;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;

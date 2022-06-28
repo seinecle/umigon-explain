@@ -1,7 +1,7 @@
 /*
  * author: Clément Levallois
  */
-package net.clementlevallois.umigon.explain;
+package net.clementlevallois.umigon.explain.controller;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
@@ -13,6 +13,7 @@ import net.clementlevallois.umigon.model.BooleanCondition;
 import net.clementlevallois.umigon.model.Category;
 import net.clementlevallois.umigon.model.ResultOneHeuristics;
 import net.clementlevallois.umigon.model.TypeOfToken.TypeOfTokenEnum;
+import net.clementlevallois.umigon.explain.parameters.HtmlSettings;
 
 /**
  *
@@ -50,6 +51,45 @@ public class ExplanationOneHeuristics {
         return sb.toString();
     }
 
+    public static String getOneHeuristicsResultsHtml(ResultOneHeuristics resultOneHeuristics, String languageTag, HtmlSettings htmlSettings) {
+        StringBuilder sb = new StringBuilder();
+        List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
+        // because we don't care to know about conditions that needed to NOT be fulfilled
+        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+
+        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+            return sb.toString();
+        }
+        sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
+        sb.append(":");
+        sb.append("<br/>");
+        sb.append("\"");
+        sb.append("<span style=\"color:")
+                .append(htmlSettings.getTermColorBasedOnSentiment(resultOneHeuristics.getCategoryEnum()))
+                .append("\">");
+        sb.append(resultOneHeuristics.getTokenInvestigated());
+        sb.append("</span>");
+        sb.append("\"");
+        if (nonFlippedBooleanConditions.isEmpty()) {
+            return sb.append(". ").toString();
+        } else {
+            sb.append(", ");
+            sb.append(getAndANumberOfConditionsWereMatched(nonFlippedBooleanConditions.size(), languageTag));
+            sb.append(":");
+            sb.append("<br/>");
+        }
+
+        sb.append("<ul>");
+        for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
+            sb.append("<li>");
+            sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
+            sb.append("</li>");
+        }
+        sb.append("</ul>");
+        sb.append("<br/>");
+        return sb.toString();
+    }
+
     public static JsonObjectBuilder getOneHeuristicsResultsJsonObject(ResultOneHeuristics resultOneHeuristics, String languageTag) {
         JsonObjectBuilder job = Json.createObjectBuilder();
 
@@ -66,8 +106,9 @@ public class ExplanationOneHeuristics {
         if (nonFlippedBooleanConditions.isEmpty()) {
             return job;
         }
+        int i = 0;
         for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
-            job.addAll(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonJsonObject(booleanCondition, languageTag));
+            job.add(String.valueOf(i++), ExplanationOneBooleanCondition.getExplanationOneBooleanConditonJsonObject(booleanCondition, languageTag));
         }
         return job;
     }
