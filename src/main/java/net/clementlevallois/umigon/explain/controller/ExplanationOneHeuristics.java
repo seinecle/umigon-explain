@@ -7,7 +7,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 import net.clementlevallois.umigon.model.BooleanCondition;
 import net.clementlevallois.umigon.model.Category;
@@ -24,25 +23,26 @@ public class ExplanationOneHeuristics {
     public static String getOneHeuristicsResultsPlainText(ResultOneHeuristics resultOneHeuristics, String languageTag) {
         StringBuilder sb = new StringBuilder();
         List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
-        // because we don't care to know about conditions that needed to NOT be fulfilled
-        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+        // because we don't care to know about conditions led to no category
+        Collection<BooleanCondition> nonEmptyBooleanConditions = booleanConditions.stream().filter(x -> !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
 
-        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
-            return sb.toString();
-        }
+//        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+//            return sb.toString();
+//        }
+
         sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
         sb.append(": \"");
 
         sb.append(resultOneHeuristics.getTokenInvestigated());
-        if (nonFlippedBooleanConditions.isEmpty()) {
+        if (nonEmptyBooleanConditions.isEmpty()) {
             return sb.append("\". ").toString();
         } else {
             sb.append("\", ");
-            sb.append(getAndANumberOfConditionsWereMatched(nonFlippedBooleanConditions.size(), languageTag));
+            sb.append(getAndANumberOfConditionsWereMatched(nonEmptyBooleanConditions.size(), languageTag));
             sb.append(":\n");
         }
 
-        for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
+        for (BooleanCondition booleanCondition : nonEmptyBooleanConditions) {
             sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
         }
         if (sb.toString().endsWith(", ")) {
@@ -55,11 +55,11 @@ public class ExplanationOneHeuristics {
         StringBuilder sb = new StringBuilder();
         List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
         // because we don't care to know about conditions that needed to NOT be fulfilled
-        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
 
-        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
-            return sb.toString();
-        }
+//        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+//            return sb.toString();
+//        }
         sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
         sb.append(":");
         sb.append("<br/>");
@@ -82,7 +82,7 @@ public class ExplanationOneHeuristics {
         sb.append("<ul>");
         for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
             sb.append("<li>");
-            sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
+            sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonHtml(booleanCondition, languageTag));
             sb.append("</li>");
         }
         sb.append("</ul>");
@@ -95,20 +95,20 @@ public class ExplanationOneHeuristics {
 
         List<BooleanCondition> booleanConditions = resultOneHeuristics.getBooleanConditions();
         // because we don't care to know about conditions that needed to NOT be fulfilled
-        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getFlipped() & !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
+        Collection<BooleanCondition> nonFlippedBooleanConditions = booleanConditions.stream().filter(x -> !x.getBooleanConditionEnum().equals(BooleanCondition.BooleanConditionEnum.none)).collect(Collectors.toList());
 
-        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
-            return job;
-        }
+//        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
+//            return job;
+//        }
         job.add("type of token matched", resultOneHeuristics.getTypeOfToken().toString());
 
         job.add("token matched", resultOneHeuristics.getTokenInvestigated());
         if (nonFlippedBooleanConditions.isEmpty()) {
             return job;
         }
-        int i = 0;
+        int i = 1;
         for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
-            job.add(String.valueOf(i++), ExplanationOneBooleanCondition.getExplanationOneBooleanConditonJsonObject(booleanCondition, languageTag));
+            job.add("boolean expression #" + String.valueOf(i++), ExplanationOneBooleanCondition.getExplanationOneBooleanConditonJsonObject(booleanCondition, languageTag));
         }
         return job;
     }

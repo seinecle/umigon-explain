@@ -89,11 +89,14 @@ public class ExplanationOneDecision {
         TWO_NEGATIVE_TERMS_THEN_MODERATOR:
                 sb.append(". ")
                         .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append("\"<span style=\"color:")
+                        .append(" ")
+                        .append("\"")
+                        .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
                         .append(decision.getTermInvolvedInDecision())
-                        .append("</span>");
+                        .append("</span>")
+                        .append("\"");
         }
 
         return sb.toString();

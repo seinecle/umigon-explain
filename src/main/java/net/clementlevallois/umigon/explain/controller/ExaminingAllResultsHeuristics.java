@@ -17,16 +17,30 @@ public class ExaminingAllResultsHeuristics {
 
     public static String goThroughAllResultsHeuristicsPlainText(Collection<ResultOneHeuristics> resultsHeuristics, String languageTag) {
         StringBuilder sb = new StringBuilder();
-        for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
-            sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsPlainText(resultOneHeuristics, languageTag));
+        sb.append(" ");
+        if (!resultsHeuristics.isEmpty()) {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("vocabulary.because"));
+            sb.append(" ");
+            for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
+                sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsPlainText(resultOneHeuristics, languageTag));
+            }
+        } else {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.because_no_heuristics_matched"));
         }
         return sb.toString();
     }
 
     public static String goThroughAllResultsHeuristicsHtml(Collection<ResultOneHeuristics> resultsHeuristics, String languageTag, HtmlSettings htmlSettings) {
         StringBuilder sb = new StringBuilder();
-        for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
-            sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsHtml(resultOneHeuristics, languageTag, htmlSettings));
+        sb.append(" ");
+        if (!resultsHeuristics.isEmpty()) {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("vocabulary.because"));
+            sb.append(" ");
+            for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
+                sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsHtml(resultOneHeuristics, languageTag, htmlSettings));
+            }
+        } else {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.because_no_heuristics_matched"));
         }
         sb.append("<br/>");
         return sb.toString();
@@ -36,7 +50,7 @@ public class ExaminingAllResultsHeuristics {
         JsonObjectBuilder job = Json.createObjectBuilder();
         int i = 1;
         for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
-            job.add(String.valueOf(i++), ExplanationOneHeuristics.getOneHeuristicsResultsJsonObject(resultOneHeuristics, languageTag));
+            job.add("token matched #" + String.valueOf(i++), ExplanationOneHeuristics.getOneHeuristicsResultsJsonObject(resultOneHeuristics, languageTag));
         }
         return job;
     }
