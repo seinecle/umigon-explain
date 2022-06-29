@@ -20,12 +20,18 @@ public class ExaminingAllResultsHeuristics {
         sb.append(" ");
         if (!resultsHeuristics.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("vocabulary.because"));
-            sb.append(" ");
+            sb.append(":\n");
             for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
+                sb.append("\t- ");
                 sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsPlainText(resultOneHeuristics, languageTag));
+                sb.append("\n");
             }
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.because_no_heuristics_matched"));
+            if (!sb.toString().endsWith(".")) {
+                sb.append(".");
+            }
+            sb.append("\n");
         }
         return sb.toString();
     }
@@ -35,14 +41,18 @@ public class ExaminingAllResultsHeuristics {
         sb.append(" ");
         if (!resultsHeuristics.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("vocabulary.because"));
-            sb.append(" ");
+            sb.append(": <br/>");
+            sb.append("<ol>");
             for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
+                sb.append("<li>");
                 sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsHtml(resultOneHeuristics, languageTag, htmlSettings));
+                sb.append("</li>");
             }
+            sb.append("</ol>");
+
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.because_no_heuristics_matched"));
         }
-        sb.append("<br/>");
         return sb.toString();
     }
 

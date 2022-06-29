@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.clementlevallois.umigon.model.BooleanCondition;
-import net.clementlevallois.umigon.model.Category;
 import net.clementlevallois.umigon.model.ResultOneHeuristics;
 import net.clementlevallois.umigon.model.TypeOfToken.TypeOfTokenEnum;
 import net.clementlevallois.umigon.explain.parameters.HtmlSettings;
@@ -42,11 +41,14 @@ public class ExplanationOneHeuristics {
             sb.append(":\n");
         }
 
+        int i =1;
         for (BooleanCondition booleanCondition : nonEmptyBooleanConditions) {
+            sb.append("\t\t").append(String.valueOf(i++)).append(") ");
             sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
+            sb.append("\n");
         }
-        if (sb.toString().endsWith(", ")) {
-            sb = new StringBuilder(sb.substring(0, sb.length() - 2));
+        if (sb.toString().endsWith(", \n")) {
+            sb = new StringBuilder(sb.substring(0, sb.length() - 3)).append("\n");
         }
         return sb.toString();
     }
@@ -61,8 +63,7 @@ public class ExplanationOneHeuristics {
 //            return sb.toString();
 //        }
         sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
-        sb.append(":");
-        sb.append("<br/>");
+        sb.append(": ");
         sb.append("\"");
         sb.append("<span style=\"color:")
                 .append(htmlSettings.getTermColorBasedOnSentiment(resultOneHeuristics.getCategoryEnum()))
@@ -86,7 +87,6 @@ public class ExplanationOneHeuristics {
             sb.append("</li>");
         }
         sb.append("</ul>");
-        sb.append("<br/>");
         return sb.toString();
     }
 

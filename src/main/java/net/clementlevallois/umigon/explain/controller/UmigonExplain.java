@@ -5,6 +5,7 @@ package net.clementlevallois.umigon.explain.controller;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -87,8 +88,9 @@ public class UmigonExplain {
         StringBuilder sb = new StringBuilder();
         List<Decision> decisions = doc.getSentimentDecisions();
         if (decisions == null || decisions.isEmpty()) {
-            return UmigonExplain.getLocaleBundle(languageTag).getString("decision.no_decision_made");
+            return UmigonExplain.getLocaleBundle(languageTag).getString("decision.no_decision_made") + ".";
         }
+        sb.append("\n");
         if (decisions.size() == 1) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.a_decision_has_been_made"));
         } else {
@@ -149,17 +151,22 @@ public class UmigonExplain {
         StringBuilder sb = new StringBuilder();
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
-        Collection<ResultOneHeuristics> resultsHeuristics = null;
+        List<ResultOneHeuristics> resultsHeuristics = new ArrayList();
+        List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
+        for (Decision decision : doc.getSentimentDecisions()) {
+            deletedHeuristicsFollowingDecisions.addAll(decision.getListOfHeuristicsImpacted());
+        }
         if (!allHeuristicsResultsForPositive.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
-            resultsHeuristics = allHeuristicsResultsForPositive.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
-            resultsHeuristics = allHeuristicsResultsForNegative.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
-            resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values();
+            resultsHeuristics.addAll(doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values());
         }
+        resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         sb.append(ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsPlainText(resultsHeuristics, languageTag));
         return sb.toString();
     }
@@ -168,7 +175,11 @@ public class UmigonExplain {
         StringBuilder sb = new StringBuilder();
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
-        Collection<ResultOneHeuristics> resultsHeuristics = null;
+        Collection<ResultOneHeuristics> resultsHeuristics = new ArrayList();
+        List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
+        for (Decision decision : doc.getSentimentDecisions()) {
+            deletedHeuristicsFollowingDecisions.addAll(decision.getListOfHeuristicsImpacted());
+        }
         sb.append("<p>");
         if (!allHeuristicsResultsForPositive.isEmpty()) {
             sb.append("<span style=\"color:")
@@ -176,18 +187,19 @@ public class UmigonExplain {
                     .append("\">");
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
             sb.append("</span>");
-            resultsHeuristics = allHeuristicsResultsForPositive.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
             sb.append("<span style=\"color:")
                     .append(htmlSettings.getNegativeTermColor())
                     .append("\">");
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
             sb.append("</span>");
-            resultsHeuristics = allHeuristicsResultsForNegative.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
             resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values();
         }
+        resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         sb.append(ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsHtml(resultsHeuristics, languageTag, new HtmlSettings()));
         sb.append("</p>");
         return sb.toString();
@@ -197,20 +209,22 @@ public class UmigonExplain {
         JsonObjectBuilder job = Json.createObjectBuilder();
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
         Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
-        Collection<ResultOneHeuristics> resultsHeuristics = null;
-        boolean sentimentDetected = false;
+        List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
+        for (Decision decision : doc.getSentimentDecisions()) {
+            deletedHeuristicsFollowingDecisions.addAll(decision.getListOfHeuristicsImpacted());
+        }
+        Collection<ResultOneHeuristics> resultsHeuristics = new ArrayList();
         if (!allHeuristicsResultsForPositive.isEmpty()) {
-            sentimentDetected = true;
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
-            resultsHeuristics = allHeuristicsResultsForPositive.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
-            sentimentDetected = true;
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
-            resultsHeuristics = allHeuristicsResultsForNegative.values();
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
         } else {
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
             resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values();
         }
+        resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         job.add("explanation heuristics", ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsJsonObject(resultsHeuristics, languageTag));
         return job;
     }
