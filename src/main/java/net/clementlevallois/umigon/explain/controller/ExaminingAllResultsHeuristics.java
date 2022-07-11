@@ -42,13 +42,18 @@ public class ExaminingAllResultsHeuristics {
         if (!resultsHeuristics.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("vocabulary.because"));
             sb.append(": <br/>");
+            sb.append("\n");
             sb.append("<ol>");
+            sb.append("\n");
             for (ResultOneHeuristics resultOneHeuristics : resultsHeuristics) {
                 sb.append("<li>");
+                sb.append("\n");
                 sb.append(ExplanationOneHeuristics.getOneHeuristicsResultsHtml(resultOneHeuristics, languageTag, htmlSettings));
                 sb.append("</li>");
+                sb.append("\n");
             }
             sb.append("</ol>");
+            sb.append("\n");
 
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.because_no_heuristics_matched"));

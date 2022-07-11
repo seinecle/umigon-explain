@@ -6,7 +6,9 @@ package net.clementlevallois.umigon.explain.controller;
 import jakarta.json.Json;
 import jakarta.json.JsonObjectBuilder;
 import java.util.Locale;
+import java.util.Set;
 import net.clementlevallois.umigon.model.BooleanCondition;
+import net.clementlevallois.umigon.model.NGram;
 
 /**
  *
@@ -17,13 +19,15 @@ public class ExplanationOneBooleanCondition {
     public static String getExplanationOneBooleanConditonPlainText(BooleanCondition booleanCondition, String languageTag) {
         StringBuilder sb = new StringBuilder();
         sb.append(getConditionalExpressionName(booleanCondition.getTokenInvestigatedGetsMatched(), booleanCondition.getBooleanConditionEnum(), booleanCondition.getFlipped(), languageTag).toLowerCase(Locale.forLanguageTag(languageTag)));
-        if (booleanCondition.getKeywordMatched() != null && !booleanCondition.getKeywordMatched().isEmpty()) {
+        if (!booleanCondition.getAssociatedKeywordMatchedAsNGrams().isEmpty()) {
+            Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
             sb.append(" (\"");
-            sb.append(booleanCondition.getKeywordMatched());
-            sb.append("\")");
-        } else if (!booleanCondition.getKeywords().isEmpty()) {
-            sb.append(" (\"");
-            sb.append(String.join(", ", booleanCondition.getKeywords()));
+            for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
+                sb.append(associatedMatchedNGram.getString()).append(", ");
+            }
+            if (sb.toString().endsWith(", ")) {
+                sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
+            }
             sb.append("\")");
         }
         sb.append(", ");
@@ -33,13 +37,14 @@ public class ExplanationOneBooleanCondition {
     public static String getExplanationOneBooleanConditonHtml(BooleanCondition booleanCondition, String languageTag) {
         StringBuilder sb = new StringBuilder();
         sb.append(getConditionalExpressionName(booleanCondition.getTokenInvestigatedGetsMatched(), booleanCondition.getBooleanConditionEnum(), booleanCondition.getFlipped(), languageTag).toLowerCase(Locale.forLanguageTag(languageTag)));
-        if (booleanCondition.getKeywordMatched() != null && !booleanCondition.getKeywordMatched().isEmpty()) {
-            sb.append(" (\"");
-            sb.append(booleanCondition.getKeywordMatched());
-            sb.append("\")");
-        } else if (!booleanCondition.getKeywords().isEmpty()) {
-            sb.append(" (\"");
-            sb.append(String.join(", ", booleanCondition.getKeywords()));
+        if (!booleanCondition.getAssociatedKeywordMatchedAsNGrams().isEmpty()) {
+            Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
+            for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
+                sb.append(associatedMatchedNGram.getString()).append(", ");
+            }
+            if (sb.toString().endsWith(", ")) {
+                sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
+            }
             sb.append("\")");
         }
         sb.append("\n");
@@ -49,11 +54,15 @@ public class ExplanationOneBooleanCondition {
     public static JsonObjectBuilder getExplanationOneBooleanConditonJsonObject(BooleanCondition booleanCondition, String languageTag) {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("conditional expression", getConditionalExpressionName(booleanCondition.getTokenInvestigatedGetsMatched(), booleanCondition.getBooleanConditionEnum(), booleanCondition.getFlipped(), languageTag).toLowerCase(Locale.forLanguageTag(languageTag)));
-        if (booleanCondition.getFlipped() & !booleanCondition.getTokenInvestigatedGetsMatched()) {
-            job.add("keyword(s) not matched", String.join(", ", booleanCondition.getKeywords()));
-        } else {
-            job.add("keyword matched", booleanCondition.getKeywordMatched());
+        Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
+        StringBuilder sb = new StringBuilder();
+        for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
+            sb.append(associatedMatchedNGram.getString()).append(", ");
         }
+        if (sb.toString().endsWith(", ")) {
+            sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
+        }
+        job.add("keyword matched", sb.toString());
         return job;
     }
 

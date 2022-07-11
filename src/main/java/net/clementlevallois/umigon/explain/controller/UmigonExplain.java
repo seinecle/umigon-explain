@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 import net.clementlevallois.umigon.model.Category;
 import net.clementlevallois.umigon.model.Category.CategoryEnum;
 import net.clementlevallois.umigon.model.Decision;
@@ -99,7 +99,9 @@ public class UmigonExplain {
         sb.append(":\n");
         for (Decision decision : decisions) {
             sb.append(ExplanationOneDecision.getExplanationOneDecisionPlainText(decision, languageTag));
-            sb.append(".");
+            if (!sb.toString().endsWith(".")) {
+                sb.append(".");
+            }
             sb.append("\n");
         }
         return sb.toString();
@@ -112,6 +114,7 @@ public class UmigonExplain {
             return sb.append("<p>")
                     .append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.no_decision_made"))
                     .append("</p>")
+                    .append("\n")
                     .toString();
         }
         sb.append("<p>");
@@ -120,16 +123,23 @@ public class UmigonExplain {
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.a_number_of_decisions_have_been_made"));
         }
-        sb.append("</p>");
+        sb.append(":</p>");
+        sb.append("\n");
 
         sb.append("<ul>");
+        sb.append("\n");
         for (Decision decision : decisions) {
             sb.append("<li>");
+            sb.append("\n");
             sb.append(ExplanationOneDecision.getExplanationOneDecisionHtml(decision, languageTag, htmlSettings));
-            sb.append(".");
+            if (!sb.toString().endsWith(".")) {
+                sb.append(".");
+            }
             sb.append("</li>");
+            sb.append("\n");
         }
         sb.append("</ul>");
+        sb.append("\n");
         return sb.toString();
     }
 
@@ -149,8 +159,8 @@ public class UmigonExplain {
 
     public static String getExplanationOfHeuristicResultsPlainText(Document doc, String languageTag) {
         StringBuilder sb = new StringBuilder();
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
+        Set<ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
+        Set<ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
         List<ResultOneHeuristics> resultsHeuristics = new ArrayList();
         List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
         for (Decision decision : doc.getSentimentDecisions()) {
@@ -158,13 +168,13 @@ public class UmigonExplain {
         }
         if (!allHeuristicsResultsForPositive.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
-            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive);
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
-            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative);
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
-            resultsHeuristics.addAll(doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values());
+            resultsHeuristics.addAll(doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10));
         }
         resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         sb.append(ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsPlainText(resultsHeuristics, languageTag));
@@ -173,42 +183,69 @@ public class UmigonExplain {
 
     public static String getExplanationOfHeuristicResultsHtml(Document doc, String languageTag, HtmlSettings htmlSettings) {
         StringBuilder sb = new StringBuilder();
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
+        sb.append("<!DOCTYPE html>");
+        sb.append("\n");
+        sb.append("<html>");
+        sb.append("\n");
+        sb.append("<head>");
+        sb.append("\n");
+        String cssToAddToHead = HtmlHighlighter.generateCssStyles(doc);
+        sb.append(cssToAddToHead);
+        sb.append("</head>");
+        sb.append("\n");
+        sb.append("<body>");
+        sb.append("\n");
+        sb.append("<p>Made with <a href=\"https://nocodefunctions.com\">https://nocodefunctions.com</a>. Remarks, questions, corrections: admin@clementlevallois.net</p>");
+        String underlinedOriginalSentence = HtmlHighlighter.underline(doc);
+        sb.append("\n");
+        sb.append("<p><strong>Text:</strong></p>");
+        sb.append("\n");
+        sb.append(underlinedOriginalSentence);
+        sb.append("</p>");
+        sb.append("\n");
+        Set<ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
+        Set<ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
         Collection<ResultOneHeuristics> resultsHeuristics = new ArrayList();
         List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
         for (Decision decision : doc.getSentimentDecisions()) {
             deletedHeuristicsFollowingDecisions.addAll(decision.getListOfHeuristicsImpacted());
         }
         sb.append("<p>");
+        sb.append("\n");
         if (!allHeuristicsResultsForPositive.isEmpty()) {
             sb.append("<span style=\"color:")
                     .append(htmlSettings.getPositiveTermColor())
                     .append("\">");
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
             sb.append("</span>");
-            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive);
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
             sb.append("<span style=\"color:")
                     .append(htmlSettings.getNegativeTermColor())
                     .append("\">");
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
             sb.append("</span>");
-            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative);
         } else {
             sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
-            resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values();
+            resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10);
         }
         resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         sb.append(ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsHtml(resultsHeuristics, languageTag, new HtmlSettings()));
         sb.append("</p>");
+        String explanationsOfDecisionsHtml = getExplanationsOfDecisionsHtml(doc, languageTag, htmlSettings);
+        sb.append(explanationsOfDecisionsHtml);
+        sb.append("</body>");
+        sb.append("\n");
+        sb.append("</html>");
+        sb.append("\n");
         return sb.toString();
     }
 
     public static JsonObjectBuilder getExplanationOfHeuristicResultsJson(Document doc, String languageTag) {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
-        Map<Integer, ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
+        Set<ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
+        Set<ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
         List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
         for (Decision decision : doc.getSentimentDecisions()) {
             deletedHeuristicsFollowingDecisions.addAll(decision.getListOfHeuristicsImpacted());
@@ -216,13 +253,13 @@ public class UmigonExplain {
         Collection<ResultOneHeuristics> resultsHeuristics = new ArrayList();
         if (!allHeuristicsResultsForPositive.isEmpty()) {
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.ispositive"));
-            resultsHeuristics.addAll(allHeuristicsResultsForPositive.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForPositive);
         } else if (!allHeuristicsResultsForNegative.isEmpty()) {
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isnegative"));
-            resultsHeuristics.addAll(allHeuristicsResultsForNegative.values());
+            resultsHeuristics.addAll(allHeuristicsResultsForNegative);
         } else {
             job.add("sentiment", UmigonExplain.getLocaleBundle(languageTag).getString("sentiment.isneutral"));
-            resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10).values();
+            resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10);
         }
         resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
         job.add("explanation heuristics", ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsJsonObject(resultsHeuristics, languageTag));

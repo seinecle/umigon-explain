@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import net.clementlevallois.umigon.model.BooleanCondition;
 import net.clementlevallois.umigon.model.ResultOneHeuristics;
-import net.clementlevallois.umigon.model.TypeOfToken.TypeOfTokenEnum;
+import net.clementlevallois.umigon.model.TypeOfTextFragment.TypeOfTextFragmentEnum;
 import net.clementlevallois.umigon.explain.parameters.HtmlSettings;
 
 /**
@@ -28,11 +28,10 @@ public class ExplanationOneHeuristics {
 //        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
 //            return sb.toString();
 //        }
-
-        sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
+        sb.append(getTokenWasMatched(resultOneHeuristics.getTextFragmentInvestigated().getTypeOfTextFragment(), languageTag));
         sb.append(": \"");
 
-        sb.append(resultOneHeuristics.getTokenInvestigated());
+        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getString());
         if (nonEmptyBooleanConditions.isEmpty()) {
             return sb.append("\". ").toString();
         } else {
@@ -41,7 +40,7 @@ public class ExplanationOneHeuristics {
             sb.append(":\n");
         }
 
-        int i =1;
+        int i = 1;
         for (BooleanCondition booleanCondition : nonEmptyBooleanConditions) {
             sb.append("\t\t").append(String.valueOf(i++)).append(") ");
             sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonPlainText(booleanCondition, languageTag));
@@ -62,13 +61,13 @@ public class ExplanationOneHeuristics {
 //        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
 //            return sb.toString();
 //        }
-        sb.append(getTokenWasMatched(resultOneHeuristics.getTypeOfToken(), languageTag));
+        sb.append(getTokenWasMatched(resultOneHeuristics.getTextFragmentInvestigated().getTypeOfTextFragment(), languageTag));
         sb.append(": ");
         sb.append("\"");
         sb.append("<span style=\"color:")
                 .append(htmlSettings.getTermColorBasedOnSentiment(resultOneHeuristics.getCategoryEnum()))
                 .append("\">");
-        sb.append(resultOneHeuristics.getTokenInvestigated());
+        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getString());
         sb.append("</span>");
         sb.append("\"");
         if (nonFlippedBooleanConditions.isEmpty()) {
@@ -78,15 +77,21 @@ public class ExplanationOneHeuristics {
             sb.append(getAndANumberOfConditionsWereMatched(nonFlippedBooleanConditions.size(), languageTag));
             sb.append(":");
             sb.append("<br/>");
+            sb.append("\n");
         }
 
         sb.append("<ul>");
+        sb.append("\n");
         for (BooleanCondition booleanCondition : nonFlippedBooleanConditions) {
             sb.append("<li>");
+            sb.append("\n");
             sb.append(ExplanationOneBooleanCondition.getExplanationOneBooleanConditonHtml(booleanCondition, languageTag));
+            sb.append("\n");
             sb.append("</li>");
+            sb.append("\n");
         }
         sb.append("</ul>");
+        sb.append("\n");
         return sb.toString();
     }
 
@@ -100,9 +105,9 @@ public class ExplanationOneHeuristics {
 //        if (resultOneHeuristics.getCategoryEnum().equals(Category.CategoryEnum._10)) {
 //            return job;
 //        }
-        job.add("type of token matched", resultOneHeuristics.getTypeOfToken().toString());
+        job.add("type of token matched", resultOneHeuristics.getTextFragmentInvestigated().getTypeOfTextFragment().toString());
 
-        job.add("token matched", resultOneHeuristics.getTokenInvestigated());
+        job.add("token matched", resultOneHeuristics.getTextFragmentInvestigated().getString());
         if (nonFlippedBooleanConditions.isEmpty()) {
             return job;
         }
@@ -132,7 +137,7 @@ public class ExplanationOneHeuristics {
 
     }
 
-    public static String getTokenWasMatched(TypeOfTokenEnum typeOfTokenEnum, String languageTag) {
+    public static String getTokenWasMatched(TypeOfTextFragmentEnum typeOfTokenEnum, String languageTag) {
         switch (typeOfTokenEnum) {
             case NGRAM:
                 return UmigonExplain.getLocaleBundle(languageTag).getString("statement.term_was_matched");
