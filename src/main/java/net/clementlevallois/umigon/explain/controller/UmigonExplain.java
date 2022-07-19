@@ -231,7 +231,8 @@ public class UmigonExplain {
             resultsHeuristics = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._10);
         }
         resultsHeuristics.addAll(deletedHeuristicsFollowingDecisions);
-        sb.append(ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsHtml(resultsHeuristics, languageTag, new HtmlSettings()));
+        String explanationsHeuristics = ExaminingAllResultsHeuristics.goThroughAllResultsHeuristicsHtml(resultsHeuristics, languageTag, new HtmlSettings());
+        sb.append(explanationsHeuristics);
         sb.append("</p>");
         String explanationsOfDecisionsHtml = getExplanationsOfDecisionsHtml(doc, languageTag, htmlSettings);
         sb.append(explanationsOfDecisionsHtml);

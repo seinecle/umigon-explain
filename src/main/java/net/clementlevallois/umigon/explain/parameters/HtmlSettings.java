@@ -22,7 +22,9 @@ public class HtmlSettings {
 
     public String getTermColorBasedOnSentiment(CategoryEnum categoryEnum) {
         switch (categoryEnum) {
-            case _11, _111:
+            case _11:
+                return positiveTermColor;
+            case _111:
                 return positiveTermColor;
             case _12:
                 return negativeTermColor;

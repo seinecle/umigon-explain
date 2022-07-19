@@ -3,6 +3,7 @@
  */
 package net.clementlevallois.umigon.explain.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.clementlevallois.umigon.model.Category;
 import net.clementlevallois.umigon.model.Category.CategoryEnum;
@@ -23,36 +24,32 @@ public class HtmlHighlighter {
     public static String underline(Document doc) {
         StringBuilder sb = new StringBuilder();
 
-        List<ResultOneHeuristics> resultsOfHeuristics = doc.getResultsOfHeuristics();
+        List<ResultOneHeuristics> resultsOfHeuristicsIncludingRemovedOnes = new ArrayList(doc.getResultsOfHeuristics());
         List<Decision> sentimentDecisions = doc.getSentimentDecisions();
         for (Decision decision : sentimentDecisions) {
             if (decision.getHeuristicsImpacted() != null) {
-                resultsOfHeuristics.add(decision.getHeuristicsImpacted());
+                resultsOfHeuristicsIncludingRemovedOnes.add(decision.getHeuristicsImpacted());
             }
         }
 
         List<TextFragment> allTextFragments = doc.getAllTextFragments();
         for (TextFragment tf : allTextFragments) {
-            boolean highlighted = false;
-            for (ResultOneHeuristics resultOneHeuristics : resultsOfHeuristics) {
+            StringBuilder tfStringBuilder = new StringBuilder();
+            tfStringBuilder.append(tf.getString());
+            for (ResultOneHeuristics resultOneHeuristics : resultsOfHeuristicsIncludingRemovedOnes) {
                 TextFragment textFragmentInvestigated = resultOneHeuristics.getTextFragmentInvestigated();
                 Category.CategoryEnum categoryEnum = resultOneHeuristics.getCategoryEnum();
                 if (tf instanceof Term && textFragmentInvestigated instanceof NGram) {
                     NGram ngram = (NGram) textFragmentInvestigated;
                     for (Term term : ngram.getTerms()) {
                         if (term.getOriginalForm().equals(tf.getString()) && term.getIndexCardinal() == tf.getIndexCardinal()) {
-                            highlighted = true;
                             if (categoryEnum.equals(CategoryEnum._11)) {
-                                sb.append("<span class=\"user\" data-uid=\"001\">");
-                                sb.append(tf.getString());
-                                sb.append("</span>");
-                                highlighted = true;
+                                tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"001\">");
+                                tfStringBuilder.append("</span>");
                             }
                             if (categoryEnum.equals(CategoryEnum._12)) {
-                                sb.append("<span class=\"user\" data-uid=\"002\">");
-                                sb.append(tf.getString());
-                                sb.append("</span>");
-                                highlighted = true;
+                                tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"002\">");
+                                tfStringBuilder.append("</span>");
                             }
                         }
                     }
@@ -61,23 +58,17 @@ public class HtmlHighlighter {
 
                     if (nonWord.getString().equals(tf.getString()) && nonWord.getIndexCardinal() == tf.getIndexCardinal()) {
                         if (categoryEnum.equals(CategoryEnum._11)) {
-                            sb.append("<span class=\"user\" data-uid=\"001\">");
-                            sb.append(tf.getString());
-                            sb.append("</span>");
-                            highlighted = true;
+                            tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"001\">");
+                            tfStringBuilder.append("</span>");
                         }
                         if (categoryEnum.equals(CategoryEnum._12)) {
-                            sb.append("<span class=\"user\" data-uid=\"002\">");
-                            sb.append(tf.getString());
-                            sb.append("</span>");
-                            highlighted = true;
+                            tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"002\">");
+                            tfStringBuilder.append("</span>");
                         }
                     }
                 }
             }
-            if (!highlighted) {
-                sb.append(tf.getString());
-            }
+            sb.append(tfStringBuilder.toString());
         }
 
         return sb.toString();

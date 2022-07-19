@@ -39,8 +39,19 @@ public class ExplanationOneBooleanCondition {
         sb.append(getConditionalExpressionName(booleanCondition.getTokenInvestigatedGetsMatched(), booleanCondition.getBooleanConditionEnum(), booleanCondition.getFlipped(), languageTag).toLowerCase(Locale.forLanguageTag(languageTag)));
         if (!booleanCondition.getAssociatedKeywordMatchedAsNGrams().isEmpty()) {
             Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
+            sb.append(" (\"");
             for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
                 sb.append(associatedMatchedNGram.getString()).append(", ");
+            }
+            if (sb.toString().endsWith(", ")) {
+                sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
+            }
+            sb.append("\")");
+        } else if (!booleanCondition.getAssociatedKeywords(false).isEmpty()) {
+            Set<String> associatedKeywordsNotMatched = booleanCondition.getAssociatedKeywords(false);
+            sb.append(" (\"");
+            for (String associatedKeywordNotMatched : associatedKeywordsNotMatched) {
+                sb.append(associatedKeywordNotMatched).append(", ");
             }
             if (sb.toString().endsWith(", ")) {
                 sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
@@ -67,10 +78,10 @@ public class ExplanationOneBooleanCondition {
     }
 
     private static String getConditionalExpressionName(Boolean matched, BooleanCondition.BooleanConditionEnum condition, boolean flipped, String languageTag) {
-        if (flipped & !matched) {
-            return UmigonExplain.getLocaleBundle(languageTag).getString("condition.name.not." + condition.name());
-        } else {
+        if (matched) {
             return UmigonExplain.getLocaleBundle(languageTag).getString("condition.name." + condition.name());
+        } else {
+            return UmigonExplain.getLocaleBundle(languageTag).getString("condition.name.not." + condition.name());
         }
     }
 

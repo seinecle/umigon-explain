@@ -47,15 +47,51 @@ public class ExplanationOneDecision {
         }
 
         switch (decision.getDecisionMotive()) {
-            case POSITIVE_TERM_THEN_NEGATION_THEN_NEGATIVE_TERM, NEGATIVE_TERM_THEN_NEGATION_THEN_POSITIVE_TERM, NEGATION_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM,
-                        NEGATION_THEN_POSITIVE_TERM_THEN_NEGATIVE_TERM:
+            case POSITIVE_TERM_THEN_NEGATION_THEN_NEGATIVE_TERM:
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
                         .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
                 break;
-            case MODERATOR_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM,NEGATIVE_TERM_THEN_MODERATOR,
-        POSITIVE_TERM_THEN_MODERATOR,
-        TWO_POSITIVE_TERMS_THEN_MODERATOR,
-        TWO_NEGATIVE_TERMS_THEN_MODERATOR:
+            case NEGATIVE_TERM_THEN_NEGATION_THEN_POSITIVE_TERM:
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case NEGATION_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case NEGATION_THEN_POSITIVE_TERM_THEN_NEGATIVE_TERM:
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case MODERATOR_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
+                if (!sb.toString().endsWith(". ")) {
+                    sb.append(". ");
+                }
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case NEGATIVE_TERM_THEN_MODERATOR:
+                if (!sb.toString().endsWith(". ")) {
+                    sb.append(". ");
+                }
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case POSITIVE_TERM_THEN_MODERATOR:
+                if (!sb.toString().endsWith(". ")) {
+                    sb.append(". ");
+                }
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case TWO_POSITIVE_TERMS_THEN_MODERATOR:
+                if (!sb.toString().endsWith(". ")) {
+                    sb.append(". ");
+                }
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                break;
+            case TWO_NEGATIVE_TERMS_THEN_MODERATOR:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
@@ -85,9 +121,9 @@ public class ExplanationOneDecision {
                 .append("</span>")
                 .append("\". ")
                 .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.it_was_removed_because"))
-                .append(" ")
-                .append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
+                .append(" ");
         if (decision.getDecisionMotive().equals(Decision.DecisionMotive.WINNER_TAKES_ALL)) {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString() + "." + decision.getTextFragmentInvolvedInDecision().getTypeOfTextFragment()));
             sb.append(": ")
                     .append("\"")
                     .append("<span style=\"color:");
@@ -103,13 +139,15 @@ public class ExplanationOneDecision {
                     .append("</span>")
                     .append("\"");
             return sb.toString();
+        } else {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
         }
-        if (!sb.toString().endsWith(". ")) {
-            sb.append(". ");
+        if (!sb.toString().endsWith(".")) {
+            sb.append(".");
         }
         switch (decision.getDecisionMotive()) {
-            case POSITIVE_TERM_THEN_NEGATION_THEN_NEGATIVE_TERM, NEGATIVE_TERM_THEN_NEGATION_THEN_POSITIVE_TERM, NEGATION_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM,
-                        NEGATION_THEN_POSITIVE_TERM_THEN_NEGATIVE_TERM:
+            case POSITIVE_TERM_THEN_NEGATION_THEN_NEGATIVE_TERM:
+                sb.append(" ");
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
                         .append(" ")
                         .append("\"<span style=\"color:")
@@ -119,10 +157,89 @@ public class ExplanationOneDecision {
                         .append("</span>")
                         .append("\"");
                 break;
-            case MODERATOR_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM,NEGATIVE_TERM_THEN_MODERATOR,
-        POSITIVE_TERM_THEN_MODERATOR,
-        TWO_POSITIVE_TERMS_THEN_MODERATOR,
-        TWO_NEGATIVE_TERMS_THEN_MODERATOR:
+            case NEGATIVE_TERM_THEN_NEGATION_THEN_POSITIVE_TERM:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ")
+                        .append("\"<span style=\"color:")
+                        .append(htmlSettings.getNegationTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case NEGATION_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ")
+                        .append("\"<span style=\"color:")
+                        .append(htmlSettings.getNegationTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case NEGATION_THEN_POSITIVE_TERM_THEN_NEGATIVE_TERM:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
+                        .append(" ")
+                        .append("\"<span style=\"color:")
+                        .append(htmlSettings.getNegationTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case MODERATOR_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" ")
+                        .append("\"")
+                        .append("<span style=\"color:")
+                        .append(htmlSettings.getModeratorTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case NEGATIVE_TERM_THEN_MODERATOR:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" ")
+                        .append("\"")
+                        .append("<span style=\"color:")
+                        .append(htmlSettings.getModeratorTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case POSITIVE_TERM_THEN_MODERATOR:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" ")
+                        .append("\"")
+                        .append("<span style=\"color:")
+                        .append(htmlSettings.getModeratorTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case TWO_POSITIVE_TERMS_THEN_MODERATOR:
+                sb.append(" ");
+                sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
+                        .append(" ")
+                        .append("\"")
+                        .append("<span style=\"color:")
+                        .append(htmlSettings.getModeratorTermColor())
+                        .append("\">")
+                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append("</span>")
+                        .append("\"");
+                break;
+            case TWO_NEGATIVE_TERMS_THEN_MODERATOR:
+                sb.append(" ");
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
                         .append(" ")
                         .append("\"")
