@@ -33,17 +33,21 @@ public class ExplanationOneDecision {
                 .append(getSentimentPlainText(decision.getHeuristicsImpacted().getCategoryEnum(), languageTag))
                 .append(". ")
                 .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.it_was_removed_because"))
-                .append(" ")
-                .append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
+                .append(" ");
         if (decision.getDecisionMotive().equals(Decision.DecisionMotive.WINNER_TAKES_ALL)) {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString() + "." + decision.getTextFragmentInvolvedInDecision().getTypeOfTextFragmentEnum()));
+        } else {
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
+        }
+        if (decision.getTextFragmentInvolvedInDecision() != null) {
             sb.append(": ")
                     .append("\"")
                     .append(decision.getTextFragmentInvolvedInDecision().getString())
-                    .append("\". ");
+                    .append("\".");
             return sb.toString();
 
-        } else if (!sb.toString().endsWith(". ")) {
-            sb.append(". ");
+        } else if (!sb.toString().endsWith(".")) {
+            sb.append(".");
         }
 
         switch (decision.getDecisionMotive()) {
@@ -123,7 +127,7 @@ public class ExplanationOneDecision {
                 .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.it_was_removed_because"))
                 .append(" ");
         if (decision.getDecisionMotive().equals(Decision.DecisionMotive.WINNER_TAKES_ALL)) {
-            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString() + "." + decision.getTextFragmentInvolvedInDecision().getTypeOfTextFragment()));
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString() + "." + decision.getTextFragmentInvolvedInDecision().getTypeOfTextFragmentEnum()));
             sb.append(": ")
                     .append("\"")
                     .append("<span style=\"color:");
@@ -261,9 +265,17 @@ public class ExplanationOneDecision {
         JsonObjectBuilder job = Json.createObjectBuilder();
         job.add("token removed", decision.getHeuristicsImpacted().getTextFragmentInvestigated().getString());
         job.add("token - sentiment associated to it", getSentimentPlainText(decision.getHeuristicsImpacted().getCategoryEnum(), languageTag));
-        job.add("decision motive", UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
         job.add("decision type", UmigonExplain.getLocaleBundle(languageTag).getString("decision.type." + decision.getDecisionType().toString()));
-        job.add("term involved in the decision", decision.getTextFragmentInvolvedInDecision().getString());
+        if (decision.getDecisionMotive().equals(Decision.DecisionMotive.WINNER_TAKES_ALL)) {
+            job.add("decision motive", UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString() + "." + decision.getTextFragmentInvolvedInDecision().getTypeOfTextFragmentEnum()));
+        } else {
+            job.add("decision motive", UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
+        }
+        if (decision.getTextFragmentInvolvedInDecision() != null) {
+            job.add("term involved in the decision", decision.getTextFragmentInvolvedInDecision().getString());
+        } else {
+            job.add("term involved in the decision", "");
+        }
         return job;
     }
 }

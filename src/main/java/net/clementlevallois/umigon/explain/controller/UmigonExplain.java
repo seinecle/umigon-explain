@@ -159,6 +159,8 @@ public class UmigonExplain {
 
     public static String getExplanationOfHeuristicResultsPlainText(Document doc, String languageTag) {
         StringBuilder sb = new StringBuilder();
+        sb.append("text: ").append(doc.getText());
+        sb.append("\n").append("\n");
         Set<ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
         Set<ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
         List<ResultOneHeuristics> resultsHeuristics = new ArrayList();
@@ -245,6 +247,8 @@ public class UmigonExplain {
 
     public static JsonObjectBuilder getExplanationOfHeuristicResultsJson(Document doc, String languageTag) {
         JsonObjectBuilder job = Json.createObjectBuilder();
+        job.add("text", doc.getText());
+        job.add("text", doc.getText());
         Set<ResultOneHeuristics> allHeuristicsResultsForPositive = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11);
         Set<ResultOneHeuristics> allHeuristicsResultsForNegative = doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12);
         List<ResultOneHeuristics> deletedHeuristicsFollowingDecisions = new ArrayList();
