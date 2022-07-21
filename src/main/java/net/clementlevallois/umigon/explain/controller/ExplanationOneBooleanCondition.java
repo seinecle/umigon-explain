@@ -23,7 +23,7 @@ public class ExplanationOneBooleanCondition {
             Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
             sb.append(" (\"");
             for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
-                sb.append(associatedMatchedNGram.getString()).append(", ");
+                sb.append(associatedMatchedNGram.getCleanedNgram()).append(", ");
             }
             if (sb.toString().endsWith(", ")) {
                 sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
@@ -41,7 +41,7 @@ public class ExplanationOneBooleanCondition {
             Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
             sb.append(" (\"");
             for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
-                sb.append(associatedMatchedNGram.getString()).append(", ");
+                sb.append(associatedMatchedNGram.getCleanedNgram()).append(", ");
             }
             if (sb.toString().endsWith(", ")) {
                 sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));
@@ -68,7 +68,7 @@ public class ExplanationOneBooleanCondition {
         Set<NGram> associatedKeywordMatchedAsNGrams = booleanCondition.getAssociatedKeywordMatchedAsNGrams();
         StringBuilder sb = new StringBuilder();
         for (NGram associatedMatchedNGram : associatedKeywordMatchedAsNGrams) {
-            sb.append(associatedMatchedNGram.getString()).append(", ");
+            sb.append(associatedMatchedNGram.getCleanedNgram()).append(", ");
         }
         if (sb.toString().endsWith(", ")) {
             sb = new StringBuilder(sb.toString().substring(0, sb.toString().length() - 2));

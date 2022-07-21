@@ -26,7 +26,7 @@ public class ExplanationOneDecision {
     public static String getExplanationOneDecisionPlainText(Decision decision, String languageTag) {
         StringBuilder sb = new StringBuilder();
         sb.append("\"")
-                .append(decision.getHeuristicsImpacted().getTextFragmentInvestigated().getString())
+                .append(decision.getHeuristicsImpacted().getTextFragmentInvestigated().getOriginalForm())
                 .append("\" ")
                 .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.was_evaluated_as"))
                 .append(" ")
@@ -42,7 +42,7 @@ public class ExplanationOneDecision {
         if (decision.getTextFragmentInvolvedInDecision() != null) {
             sb.append(": ")
                     .append("\"")
-                    .append(decision.getTextFragmentInvolvedInDecision().getString())
+                    .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                     .append("\".");
             return sb.toString();
 
@@ -53,54 +53,54 @@ public class ExplanationOneDecision {
         switch (decision.getDecisionMotive()) {
             case POSITIVE_TERM_THEN_NEGATION_THEN_NEGATIVE_TERM:
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
-                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case NEGATIVE_TERM_THEN_NEGATION_THEN_POSITIVE_TERM:
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
-                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case NEGATION_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
-                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case NEGATION_THEN_POSITIVE_TERM_THEN_NEGATIVE_TERM:
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_negative_term_is"))
-                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" ").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case MODERATOR_THEN_NEGATIVE_TERM_THEN_POSITIVE_TERM:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case NEGATIVE_TERM_THEN_MODERATOR:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case POSITIVE_TERM_THEN_MODERATOR:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case TWO_POSITIVE_TERMS_THEN_MODERATOR:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case TWO_NEGATIVE_TERMS_THEN_MODERATOR:
                 if (!sb.toString().endsWith(". ")) {
                     sb.append(". ");
                 }
                 sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.the_moderator_is"))
-                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getString()).append("\"");
+                        .append(" \"").append(decision.getTextFragmentInvolvedInDecision().getOriginalForm()).append("\"");
                 break;
             case WINNER_TAKES_ALL:
             //nothing here because we treated this case above the switch statement
@@ -114,7 +114,7 @@ public class ExplanationOneDecision {
                 .append("\"<span style=\"color:")
                 .append(htmlSettings.getTermColorBasedOnSentiment(decision.getHeuristicsImpacted().getCategoryEnum()))
                 .append("\">")
-                .append(decision.getHeuristicsImpacted().getTextFragmentInvestigated().getString())
+                .append(decision.getHeuristicsImpacted().getTextFragmentInvestigated().getOriginalForm())
                 .append("</span>\" ")
                 .append(UmigonExplain.getLocaleBundle(languageTag).getString("statement.was_evaluated_as"))
                 .append(" ")
@@ -139,7 +139,7 @@ public class ExplanationOneDecision {
                 sb.append(htmlSettings.getModeratorTermColor());
             }
             sb.append("\">")
-                    .append(decision.getTextFragmentInvolvedInDecision().getString())
+                    .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                     .append("</span>")
                     .append("\"");
             return sb.toString();
@@ -157,7 +157,7 @@ public class ExplanationOneDecision {
                         .append("\"<span style=\"color:")
                         .append(htmlSettings.getNegationTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -168,7 +168,7 @@ public class ExplanationOneDecision {
                         .append("\"<span style=\"color:")
                         .append(htmlSettings.getNegationTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -179,7 +179,7 @@ public class ExplanationOneDecision {
                         .append("\"<span style=\"color:")
                         .append(htmlSettings.getNegationTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -190,7 +190,7 @@ public class ExplanationOneDecision {
                         .append("\"<span style=\"color:")
                         .append(htmlSettings.getNegationTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -202,7 +202,7 @@ public class ExplanationOneDecision {
                         .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -214,7 +214,7 @@ public class ExplanationOneDecision {
                         .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -226,7 +226,7 @@ public class ExplanationOneDecision {
                         .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -238,7 +238,7 @@ public class ExplanationOneDecision {
                         .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -250,7 +250,7 @@ public class ExplanationOneDecision {
                         .append("<span style=\"color:")
                         .append(htmlSettings.getModeratorTermColor())
                         .append("\">")
-                        .append(decision.getTextFragmentInvolvedInDecision().getString())
+                        .append(decision.getTextFragmentInvolvedInDecision().getOriginalForm())
                         .append("</span>")
                         .append("\"");
                 break;
@@ -263,7 +263,7 @@ public class ExplanationOneDecision {
 
     public static JsonObjectBuilder getExplanationOneDecisionJsonObject(Decision decision, String languageTag) {
         JsonObjectBuilder job = Json.createObjectBuilder();
-        job.add("token removed", decision.getHeuristicsImpacted().getTextFragmentInvestigated().getString());
+        job.add("token removed", decision.getHeuristicsImpacted().getTextFragmentInvestigated().getOriginalForm());
         job.add("token - sentiment associated to it", getSentimentPlainText(decision.getHeuristicsImpacted().getCategoryEnum(), languageTag));
         job.add("decision type", UmigonExplain.getLocaleBundle(languageTag).getString("decision.type." + decision.getDecisionType().toString()));
         if (decision.getDecisionMotive().equals(Decision.DecisionMotive.WINNER_TAKES_ALL)) {
@@ -272,7 +272,7 @@ public class ExplanationOneDecision {
             job.add("decision motive", UmigonExplain.getLocaleBundle(languageTag).getString("decision.motive." + decision.getDecisionMotive().toString()));
         }
         if (decision.getTextFragmentInvolvedInDecision() != null) {
-            job.add("term involved in the decision", decision.getTextFragmentInvolvedInDecision().getString());
+            job.add("term involved in the decision", decision.getTextFragmentInvolvedInDecision().getOriginalForm());
         } else {
             job.add("term involved in the decision", "");
         }

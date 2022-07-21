@@ -12,7 +12,6 @@ import net.clementlevallois.umigon.model.BooleanCondition;
 import net.clementlevallois.umigon.model.ResultOneHeuristics;
 import net.clementlevallois.umigon.model.TypeOfTextFragment.TypeOfTextFragmentEnum;
 import net.clementlevallois.umigon.explain.parameters.HtmlSettings;
-import net.clementlevallois.umigon.model.TypeOfTextFragment;
 
 /**
  *
@@ -32,7 +31,7 @@ public class ExplanationOneHeuristics {
         sb.append(getTokenWasMatched(resultOneHeuristics.getTextFragmentInvestigated().getTypeOfTextFragmentEnum(), languageTag));
         sb.append(": \"");
 
-        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getString());
+        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getOriginalForm());
         if (nonEmptyBooleanConditions.isEmpty()) {
             return sb.append("\". ").toString();
         } else {
@@ -68,7 +67,7 @@ public class ExplanationOneHeuristics {
         sb.append("<span style=\"color:")
                 .append(htmlSettings.getTermColorBasedOnSentiment(resultOneHeuristics.getCategoryEnum()))
                 .append("\">");
-        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getString());
+        sb.append(resultOneHeuristics.getTextFragmentInvestigated().getOriginalForm());
         sb.append("</span>");
         sb.append("\"");
         if (nonFlippedBooleanConditions.isEmpty()) {
@@ -108,7 +107,7 @@ public class ExplanationOneHeuristics {
 //        }
         job.add("type of token matched", resultOneHeuristics.getTextFragmentInvestigated().getTypeOfTextFragmentEnum().toString());
 
-        job.add("token matched", resultOneHeuristics.getTextFragmentInvestigated().getString());
+        job.add("token matched", resultOneHeuristics.getTextFragmentInvestigated().getOriginalForm());
         if (nonFlippedBooleanConditions.isEmpty()) {
             return job;
         }

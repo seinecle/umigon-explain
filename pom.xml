@@ -3,11 +3,16 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.clementlevallois.umigonfamily</groupId>
     <artifactId>umigon-explain</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>umigon-model</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>umigon-core</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
@@ -22,7 +27,6 @@
             <version>2.0.1</version>
             <type>jar</type>
         </dependency>
-
     </dependencies>
     <build>
         <plugins>

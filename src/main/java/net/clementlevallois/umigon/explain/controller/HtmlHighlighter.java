@@ -9,6 +9,7 @@ import net.clementlevallois.umigon.model.Category;
 import net.clementlevallois.umigon.model.Category.CategoryEnum;
 import net.clementlevallois.umigon.model.Decision;
 import net.clementlevallois.umigon.model.Document;
+import net.clementlevallois.umigon.model.Hashtag;
 import net.clementlevallois.umigon.model.NGram;
 import net.clementlevallois.umigon.model.NonWord;
 import net.clementlevallois.umigon.model.ResultOneHeuristics;
@@ -35,14 +36,14 @@ public class HtmlHighlighter {
         List<TextFragment> allTextFragments = doc.getAllTextFragments();
         for (TextFragment tf : allTextFragments) {
             StringBuilder tfStringBuilder = new StringBuilder();
-            tfStringBuilder.append(tf.getString());
+            tfStringBuilder.append(tf.getOriginalForm());
             for (ResultOneHeuristics resultOneHeuristics : resultsOfHeuristicsIncludingRemovedOnes) {
                 TextFragment textFragmentInvestigated = resultOneHeuristics.getTextFragmentInvestigated();
                 Category.CategoryEnum categoryEnum = resultOneHeuristics.getCategoryEnum();
                 if (tf instanceof Term && textFragmentInvestigated instanceof NGram) {
                     NGram ngram = (NGram) textFragmentInvestigated;
                     for (Term term : ngram.getTerms()) {
-                        if (term.getOriginalForm().equals(tf.getString()) && term.getIndexCardinal() == tf.getIndexCardinal()) {
+                        if (term.getOriginalForm().equals(tf.getOriginalForm()) && term.getIndexCardinal() == tf.getIndexCardinal()) {
                             if (categoryEnum.equals(CategoryEnum._11)) {
                                 tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"001\">");
                                 tfStringBuilder.append("</span>");
@@ -53,10 +54,25 @@ public class HtmlHighlighter {
                             }
                         }
                     }
-                } else if (tf instanceof NonWord && textFragmentInvestigated instanceof NonWord) {
+                }
+                else if (tf instanceof NonWord && textFragmentInvestigated instanceof NonWord) {
                     NonWord nonWord = (NonWord) textFragmentInvestigated;
 
-                    if (nonWord.getString().equals(tf.getString()) && nonWord.getIndexCardinal() == tf.getIndexCardinal()) {
+                    if (nonWord.getOriginalForm().equals(tf.getOriginalForm()) && nonWord.getIndexCardinal() == tf.getIndexCardinal()) {
+                        if (categoryEnum.equals(CategoryEnum._11)) {
+                            tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"001\">");
+                            tfStringBuilder.append("</span>");
+                        }
+                        if (categoryEnum.equals(CategoryEnum._12)) {
+                            tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"002\">");
+                            tfStringBuilder.append("</span>");
+                        }
+                    }
+                }
+                else if (tf instanceof Hashtag && textFragmentInvestigated instanceof Hashtag) {
+                    Hashtag hashtag = (Hashtag) textFragmentInvestigated;
+
+                    if (hashtag.getOriginalForm().equals(tf.getOriginalForm()) && hashtag.getIndexCardinal() == tf.getIndexCardinal()) {
                         if (categoryEnum.equals(CategoryEnum._11)) {
                             tfStringBuilder.insert(0,"<span class=\"user\" data-uid=\"001\">");
                             tfStringBuilder.append("</span>");
