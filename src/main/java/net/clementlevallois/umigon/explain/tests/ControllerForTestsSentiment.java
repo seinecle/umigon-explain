@@ -46,7 +46,7 @@ public class ControllerForTestsSentiment {
         resultEN = classifierOneDocumentEN.call(docEN);
         System.out.println("test: " + docEN.getText());
         System.out.println("result: " + UmigonExplain.getSentimentPlainText(resultEN, "fr"));
-        String markers = UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings);
+        String markers = UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings, false);
         System.out.println("semantic markers found: " + markers);
         System.out.println("decisions made: " + UmigonExplain.getExplanationsOfDecisionsHtml(resultEN, "fr", htmlSettings));
 
@@ -58,7 +58,7 @@ public class ControllerForTestsSentiment {
         resultEN = classifierOneDocumentEN.call(docEN);
         System.out.println("test: " + docEN.getText());
         System.out.println("result: " + UmigonExplain.getSentimentPlainText(resultEN, "fr"));
-        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings));
+        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings, false));
         System.out.println("decisions made: " + UmigonExplain.getExplanationsOfDecisionsHtml(resultEN, "fr", htmlSettings));
 
         System.out.println("expected: positive tone");
@@ -68,7 +68,7 @@ public class ControllerForTestsSentiment {
         resultEN = classifierOneDocumentEN.call(docEN);
         System.out.println("test: " + docEN.getText());
         System.out.println("result: " + UmigonExplain.getSentimentPlainText(resultEN, "fr"));
-        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings));
+        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(resultEN, "fr", htmlSettings, false));
         System.out.println("decisions made: " + UmigonExplain.getExplanationsOfDecisionsHtml(resultEN, "fr", htmlSettings));
 
         System.out.println("expected: neutral tone");
@@ -161,7 +161,7 @@ public class ControllerForTestsSentiment {
         result = classifierOneDocument.call(doc);
         System.out.println("test: " + doc.getText());
         System.out.println("result: " + UmigonExplain.getSentimentPlainText(result, "fr"));
-        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(result, "fr", htmlSettings));
+        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(result, "fr", htmlSettings, false));
         System.out.println("decisions made: " + UmigonExplain.getExplanationsOfDecisionsHtml(result, "fr", htmlSettings));
         System.out.println("expected: negative tone");
         System.out.println("-----------");
@@ -201,7 +201,7 @@ public class ControllerForTestsSentiment {
         result = classifierOneDocument.call(doc);
         System.out.println("test: " + doc.getText());
         System.out.println("result: " + UmigonExplain.getSentimentPlainText(result, "fr"));
-        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(result, "fr", htmlSettings));
+        System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsHtml(result, "fr", htmlSettings, false));
         System.out.println("semantic markers found: " + UmigonExplain.getExplanationOfHeuristicResultsPlainText(result, "fr"));
         System.out.println("decisions made: " + UmigonExplain.getExplanationsOfDecisionsPlainText(result, "fr"));
         System.out.println("expected: negative tone");

@@ -144,7 +144,7 @@ public class ExplanationOneHeuristics {
             case EMOJI:
                 return UmigonExplain.getLocaleBundle(languageTag).getString("statement.emoji_was_matched");
             case ONOMATOPAE:
-                return UmigonExplain.getLocaleBundle(languageTag).getString("onomatopae.term_was_matched");
+                return UmigonExplain.getLocaleBundle(languageTag).getString("statement.onomatopae_was_matched");
             case HASHTAG:
                 return UmigonExplain.getLocaleBundle(languageTag).getString("statement.hashtag_was_matched");
             case EMOTICON_IN_ASCII:

@@ -50,8 +50,23 @@ public class UmigonExplain {
         }
     }
 
+    public static Document enrichDocWithPlainTextSentimentResults(Document doc, String locale) {
+        if (!doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11).isEmpty()) {
+            doc.setCategoryLocalizedPlainText(UmigonExplain.getLocaleBundle(locale).getString("sentiment.ispositive"));
+            doc.setCategoryCode("_11");
+        } else if (!doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12).isEmpty()) {
+            doc.setCategoryLocalizedPlainText(UmigonExplain.getLocaleBundle(locale).getString("sentiment.isnegative"));
+            doc.setCategoryCode("_12");
+        } else {
+            doc.setCategoryLocalizedPlainText(UmigonExplain.getLocaleBundle(locale).getString("sentiment.isneutral"));
+            doc.setCategoryCode("_10");
+        }
+        return doc;
+    }
+
     public static JsonObjectBuilder getSentimentJsonObject(Document doc, String locale) {
         JsonObjectBuilder job = Json.createObjectBuilder();
+        
         if (!doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._11).isEmpty()) {
             return job.add("sentiment", UmigonExplain.getLocaleBundle(locale).getString("sentiment.ispositive"));
         } else if (!doc.getAllHeuristicsResultsForOneCategory(Category.CategoryEnum._12).isEmpty()) {
@@ -183,7 +198,7 @@ public class UmigonExplain {
         return sb.toString();
     }
 
-    public static String getExplanationOfHeuristicResultsHtml(Document doc, String languageTag, HtmlSettings htmlSettings) {
+    public static String getExplanationOfHeuristicResultsHtml(Document doc, String languageTag, HtmlSettings htmlSettings, Boolean withoutContactAndTextTitle) {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>");
         sb.append("\n");
@@ -197,18 +212,20 @@ public class UmigonExplain {
         sb.append("\n");
         sb.append("<body>");
         sb.append("\n");
-        sb.append("<p>");
-        sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("message.contact"));
-        sb.append("</p>");
-        sb.append("\n");
-        sb.append("<br/>");
-        sb.append("\n");
-        sb.append("<br/>");
-        sb.append("\n");
-        sb.append("<p><strong>").append(UmigonExplain.getLocaleBundle(languageTag).getString("message.text")).append(":</strong></p>");
-        sb.append("\n");
-        sb.append("<br/>");
-        sb.append("\n");
+        if (!withoutContactAndTextTitle) {
+            sb.append("<p>");
+            sb.append(UmigonExplain.getLocaleBundle(languageTag).getString("message.contact"));
+            sb.append("</p>");
+            sb.append("\n");
+            sb.append("<br/>");
+            sb.append("\n");
+            sb.append("<br/>");
+            sb.append("\n");
+            sb.append("<p><strong>").append(UmigonExplain.getLocaleBundle(languageTag).getString("message.text")).append(":</strong></p>");
+            sb.append("\n");
+            sb.append("<br/>");
+            sb.append("\n");
+        }
         sb.append("<p>");
         String underlinedOriginalSentence = HtmlHighlighter.underline(doc);
         sb.append(underlinedOriginalSentence);

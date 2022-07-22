@@ -110,6 +110,12 @@ public class ExplanationOneDecision {
 
     public static String getExplanationOneDecisionHtml(Decision decision, String languageTag, HtmlSettings htmlSettings) {
         StringBuilder sb = new StringBuilder();
+        if (decision.getDecisionMotive() == null){
+            System.out.println("decision without motive:");
+            System.out.println(decision.getDecisionType().name());
+            System.out.println(decision.getTextFragmentInvolvedInDecision().getOriginalForm());
+            return sb.toString();
+        }
         sb
                 .append("\"<span style=\"color:")
                 .append(htmlSettings.getTermColorBasedOnSentiment(decision.getHeuristicsImpacted().getCategoryEnum()))
